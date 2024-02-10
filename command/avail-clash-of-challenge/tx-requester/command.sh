@@ -67,15 +67,27 @@ EOF
     echo "Run 'node schedule.js' to start the cron job"
     echo "Log file will be created at ~/tmp/transaction.log"
     echo "You can use 'tail -f ~/tmp/transaction.log' to see the logs"
+
     echo "Do you want to start the cron job now? (y/n)"
+
     read answer
 
-    if [ "$answer" != "${answer#[Yy]}" ]; then
+    if [ "$answer" != "${answer#[Yy]}" ] ; then
         echo "You selected Yes"
+
+        screen -S ScheduleTransaction -d -m
+
         node schedule.js
+
+        echo "Ctrl + A, then press D to exit"
+
+        echo "You can use 'screen -r ScheduleTransaction' to reattach the screen"
+
+        echo "You can use 'screen -X -S ScheduleTransaction quit' to kill the screen"
     else
-        echo "You selected No"
+        echo "You selected No, you can run 'node schedule.js' to start the cron job."
     fi
+
 else
     echo "You selected No, all has been set up. You can now use 'node scripts/deploy.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json 0x1' to deploy the transaction."
 fi
