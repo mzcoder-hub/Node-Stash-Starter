@@ -12,7 +12,7 @@ Included in this repository is a convenient .sh command designed to simplify the
 
 You can use it by this command below
 
-```wget File command.sh && bash command.sh```
+`wget File command.sh && bash command.sh`
 
 theres will be alot of tutorial or .sh going to upload, if you interest to contribute you can just add pull request and i will review it
 
