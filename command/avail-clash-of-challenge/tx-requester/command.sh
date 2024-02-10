@@ -1,67 +1,46 @@
+#!/bin/bash
+
 # Path: command/avail-clash-of-challenge/tx-requester/command.sh
 
 # Install nvm
-
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
-
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 
+# Source .bashrc to make nvm available in the current shell session
 source ~/.bashrc
 
-# Define available versions
-versions=("v20.5.1" "v20.7.0" "20.11.0")
+# Install Node.js version 20.5.1 using nvm
+nvm install v20.5.1
 
-# Prompt user to select a version
-echo "Please select Node Version You want to install:"
-select version in "${versions[@]}"; do
-    case $version in
-        "v20.5.1")
-            echo "You selected v20.5.1"
-            # Add commands for v20.5.1
-            nvm install v20.5.1
-            ;;
-        "v20.7.0")
-            echo "You selected v20.7.0"
-            # Add commands for v20.7.0
-            nvm install v20.7.0        
-            ;;
-        "20.11.0")
-            echo "You selected 20.11.0"
-            # Add commands for 20.11.0
-            nvm install 20.11.0
-            ;;
-        *) echo "Invalid option";;
-    esac
-    break
-done
-
+# Clone the repository
 git clone https://github.com/karnotxyz/madara-get-started
 cd madara-get-started
-npm i
 
+# Install dependencies
+npm install
+
+# Run declare.js script
 node scripts/declare.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json ./contracts/OpenZeppelinAccountCairoOne.casm.json
 
-echo "you can use  `node scripts/deploy.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json 0x1` to deploy the Transaction"
+echo "You can use 'node scripts/deploy.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json 0x1' to deploy the transaction."
 
-echo "or did you want to create a new Transaction and cron those? (y/n)"
-
+echo "Do you want to create a new transaction and cron it? (y/n)"
 read answer
 
-if [ "$answer" != "${answer#[Yy]}" ] ;then
+if [ "$answer" != "${answer#[Yy]}" ] ; then
     echo "You selected Yes"
-    # Append '.js' extension to the filename
-    filename="schedule.js"
 
-    # Check if the file already exists
-    if [ -e "schedule.js" ]; then
-        echo "File 'schedule.js' already exists. Exiting."
+    # Create the schedule.js file and fill it with content
+    filename="schedule.js"
+    if [ -e "$filename" ]; then
+        echo "File '$filename' already exists. Exiting."
         exit 1
     fi
 
-    mkdir ~/tmp
+    mkdir -p ~/tmp
 
-# Create the .js file and fill it with content
-cat <<EOF > "$filename"
+    cd ~/madara-get-started
+
+    cat <<EOF > "$filename"
 const cron = require('node-cron');
 const { exec } = require('child_process');
 
@@ -82,26 +61,21 @@ cron.schedule('* * * * *', () => {
 });
 EOF
 
-echo "Created file: $filename with initial content."
+    npm install node-cron
 
-echo "run Node schedule.js to start the cron job"
-echo "log file will be created at ~/tmp/transaction.log"
-echo "you can use `tail -f ~/tmp/transaction.log` to see the logs"
-echo "wanna start the cron job now? (y/n)"
+    echo "Created file: $filename with initial content."
+    echo "Run 'node schedule.js' to start the cron job"
+    echo "Log file will be created at ~/tmp/transaction.log"
+    echo "You can use 'tail -f ~/tmp/transaction.log' to see the logs"
+    echo "Do you want to start the cron job now? (y/n)"
+    read answer
 
-read answer
-
-if [ "$answer" != "${answer#[Yy]}" ] ;then
-    echo "You selected Yes"
-    node schedule.js
+    if [ "$answer" != "${answer#[Yy]}" ]; then
+        echo "You selected Yes"
+        node schedule.js
+    else
+        echo "You selected No"
+    fi
 else
-    echo "You selected No"
+    echo "You selected No, all has been set up. You can now use 'node scripts/deploy.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json 0x1' to deploy the transaction."
 fi
-
-
-else
-    echo "You selected No"
-fi
-
-echo "You selected No, all has ben seet up, you can now use `node scripts/deploy.js ./contracts/OpenZeppelinAccountCairoOne.sierra.json 0x1` to deploy the Transaction"
-###
