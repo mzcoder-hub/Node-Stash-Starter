@@ -16,6 +16,8 @@ expect eof
 
 source "$HOME/.cargo/env"
 
+sudo apt-get update
+
 # Install the latest stable version of Docker
 
 # Add Docker's official GPG key:

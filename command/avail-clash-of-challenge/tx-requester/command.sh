@@ -8,12 +8,16 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 # Source .bashrc to make nvm available in the current shell session
 source ~/.bashrc
 
+sudo apt-get update
+
 # Install Node.js version 20.5.1 using nvm
 nvm install v20.5.1
 
 # Clone the repository
 git clone https://github.com/karnotxyz/madara-get-started
 cd madara-get-started
+
+sudo apt-get update
 
 # Install dependencies
 npm install
